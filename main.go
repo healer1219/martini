@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gitlab.tiandy.com/lizewei08892/ginwebframework/bootstrap"
+	"github.com/healer1219/gin-web-framework/bootstrap"
 )
 
 func main() {

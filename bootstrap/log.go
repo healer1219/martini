@@ -1,9 +1,9 @@
 package bootstrap
 
 import (
-	"gitlab.tiandy.com/lizewei08892/ginwebframework/config"
-	"gitlab.tiandy.com/lizewei08892/ginwebframework/global"
-	"gitlab.tiandy.com/lizewei08892/ginwebframework/utils"
+	"github.com/healer1219/gin-web-framework/config"
+	"github.com/healer1219/gin-web-framework/global"
+	"github.com/healer1219/gin-web-framework/utils"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"

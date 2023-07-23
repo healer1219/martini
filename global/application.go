@@ -2,8 +2,8 @@ package global
 
 import (
 	"github.com/go-redis/redis"
+	"github.com/healer1219/gin-web-framework/config"
 	"github.com/spf13/viper"
-	"gitlab.tiandy.com/lizewei08892/ginwebframework/config"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )

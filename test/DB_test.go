@@ -1,8 +1,8 @@
 package test
 
 import (
-	"gitlab.tiandy.com/lizewei08892/ginwebframework/bootstrap"
-	"gitlab.tiandy.com/lizewei08892/ginwebframework/global"
+	"github.com/healer1219/gin-web-framework/bootstrap"
+	"github.com/healer1219/gin-web-framework/global"
 	"testing"
 	"time"
 )

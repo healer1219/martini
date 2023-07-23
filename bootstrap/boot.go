@@ -2,7 +2,7 @@ package bootstrap
 
 import (
 	"github.com/gin-gonic/gin"
-	"gitlab.tiandy.com/lizewei08892/ginwebframework/global"
+	"github.com/healer1219/gin-web-framework/global"
 )
 
 type Application struct {
