@@ -27,11 +27,20 @@ func Default() *Application {
 }
 
 func NewApplicationWithOpts(opts ...BootOption) *Application {
+	return NewApplication(
+		gin.Default(),
+		opts,
+		make([]StartOption, 0),
+		global.App,
+	)
+}
+
+func NewApplication(engine *gin.Engine, bootOpts []BootOption, startOpts []StartOption, globalApp *global.Application) *Application {
 	return &Application{
-		engine:    gin.Default(),
-		bootOpts:  opts,
-		startOpts: make([]StartOption, 0),
-		globalApp: global.App,
+		engine:    engine,
+		bootOpts:  bootOpts,
+		startOpts: startOpts,
+		globalApp: globalApp,
 	}
 }
 
@@ -42,7 +51,7 @@ func (app *Application) Router(opts ...RouteOption) *Application {
 	return app
 }
 
-func (app *Application) BootUp() *Application {
+func (app *Application) BootUp() {
 	for _, bootOpt := range app.bootOpts {
 		bootOpt()
 	}
@@ -51,5 +60,4 @@ func (app *Application) BootUp() *Application {
 	}
 	global.App.Logger.Info("starting ------ ----- --- ")
 	_ = app.engine.Run(":" + app.globalApp.Config.App.Port)
-	return app
 }

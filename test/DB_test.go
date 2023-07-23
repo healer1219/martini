@@ -29,7 +29,7 @@ func preTest() {
 
 func TestDb(t *testing.T) {
 
-	bootstrap.NewApplicationWithOpts().BootUp()
+	bootstrap.Default().BootUp()
 
 	preTest()
 	var systemInfo SystemInfo
