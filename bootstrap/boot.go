@@ -5,58 +5,51 @@ import (
 	"github.com/healer1219/gin-web-framework/global"
 )
 
-type Application struct {
-	engine *gin.Engine
-}
-
 type StartOption func()
 
-var startOpts = []StartOption{}
+type BootOption func() *global.Application
 
-func HasStartOpt() bool {
-	return len(startOpts) != 0
+type Application struct {
+	engine    *gin.Engine
+	bootOpts  []BootOption
+	startOpts []StartOption
+	globalApp *global.Application
 }
 
-func StartOpt(opts ...StartOption) {
-	startOpts = append(startOpts, opts...)
+var baseBootOption = []BootOption{
+	InitConfig,
+	InitLog,
+	InitDb,
 }
 
-func doStartOpt() {
-	if HasStartOpt() {
-		for _, opt := range startOpts {
-			opt()
-		}
+func Default() *Application {
+	return NewApplicationWithOpts(baseBootOption...)
+}
+
+func NewApplicationWithOpts(opts ...BootOption) *Application {
+	return &Application{
+		engine:    gin.Default(),
+		bootOpts:  opts,
+		startOpts: make([]StartOption, 0),
+		globalApp: global.App,
 	}
 }
 
-func BootUp() {
-	initAll()
-	doStartOpt()
+func (app *Application) Router(opts ...RouteOption) *Application {
+	for _, opt := range opts {
+		opt(app.engine)
+	}
+	return app
+}
+
+func (app *Application) BootUp() *Application {
+	for _, bootOpt := range app.bootOpts {
+		bootOpt()
+	}
+	for _, startOpt := range app.startOpts {
+		startOpt()
+	}
 	global.App.Logger.Info("starting ------ ----- --- ")
-	var ginEngine *gin.Engine
-	if HasRouter() {
-		ginEngine = SetupRouter()
-	} else {
-		ginEngine = gin.Default()
-	}
-
-	app := global.App.Config.App
-
-	//服务启动
-	_ = ginEngine.Run(":" + app.Port)
-}
-
-func initAll() {
-	InitConfig()
-	config := global.Config()
-	if config == nil {
-		return
-	}
-	InitLog()
-	if !config.Database.IsEmpty() {
-		InitDb()
-	}
-	if !config.Redis.IsEmpty() {
-		InitRedis()
-	}
+	_ = app.engine.Run(":" + app.globalApp.Config.App.Port)
+	return app
 }

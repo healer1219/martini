@@ -27,13 +27,14 @@ var (
 	globalConfig *config.Config
 )
 
-func InitLog() *zap.Logger {
+func InitLog() *global.Application {
+	global.App.RequireConfig(" init logger! ")
 	globalConfig = global.App.Config
 	createRootDir()
 	setLogLevel()
 	core := getZapCore()
 	global.App.Logger = zap.New(core, options...)
-	return global.App.Logger
+	return global.App
 }
 
 func getZapCore() zapcore.Core {

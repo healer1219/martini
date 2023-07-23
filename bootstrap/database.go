@@ -31,7 +31,8 @@ func GetDb(dbConfig config.Database) *gorm.DB {
 	}
 }
 
-func InitDb() *gorm.DB {
+func InitDb() *global.Application {
+	global.App.RequireConfigAndLog("init db!")
 	dbConfig := global.App.Config.Database
 	global.App.DB = GetDb(dbConfig)
 	dbConfMap := global.Config().DatabaseMap
@@ -41,7 +42,7 @@ func InitDb() *gorm.DB {
 			global.App.AddDb(k, db)
 		}
 	}
-	return global.App.DB
+	return global.App
 }
 
 func RealeaseDB() {

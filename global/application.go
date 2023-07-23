@@ -35,6 +35,24 @@ func DB() *gorm.DB {
 	return App.DB
 }
 
+func (app *Application) RequireConfig(msg string) {
+	if app.Config == nil {
+		panic("config is nil, msg: " + msg)
+	}
+}
+
+func (app *Application) RequireLog(msg string) {
+	if app.Config == nil {
+		panic("logger is nil, msg: " + msg)
+	}
+}
+
+func (app *Application) RequireConfigAndLog(msg string) {
+	if app.Config == nil {
+		panic("config and logger are both nil, msg: " + msg)
+	}
+}
+
 func (app *Application) DbByName(customName string) *gorm.DB {
 	if app.dbMap == nil || len(app.dbMap) == 0 {
 		app.Logger.Warn("dataBase connections is empty")

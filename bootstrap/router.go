@@ -2,15 +2,15 @@ package bootstrap
 
 import "github.com/gin-gonic/gin"
 
-type Option func(*gin.Engine)
+type RouteOption func(*gin.Engine)
 
-var routeOpts = []Option{}
+var routeOpts = []RouteOption{}
 
 func HasRouter() bool {
 	return len(routeOpts) != 0
 }
 
-func Regist(opts ...Option) {
+func Regist(opts ...RouteOption) {
 	routeOpts = append(routeOpts, opts...)
 }
 

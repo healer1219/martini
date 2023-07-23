@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-func InitConfig() *viper.Viper {
+func InitConfig() *global.Application {
 	configFile := "config.yaml"
 	if envConfigFile := os.Getenv("CONFIG_FILE"); envConfigFile != "" {
 		configFile = envConfigFile
@@ -26,7 +26,7 @@ func InitConfig() *viper.Viper {
 		UnmarshalConfig(v)
 	})
 	UnmarshalConfig(v)
-	return v
+	return global.App
 }
 
 func UnmarshalConfig(v *viper.Viper) {

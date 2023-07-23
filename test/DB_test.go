@@ -28,6 +28,9 @@ func preTest() {
 }
 
 func TestDb(t *testing.T) {
+
+	bootstrap.NewApplicationWithOpts().BootUp()
+
 	preTest()
 	var systemInfo SystemInfo
 	defer bootstrap.RealeaseDB()

@@ -7,8 +7,14 @@ import (
 	"go.uber.org/zap"
 )
 
-func InitRedis() (*redis.Client, error) {
-	return getRedisClient(&global.App.Config.Redis)
+func InitRedis() *global.Application {
+	global.App.RequireConfigAndLog(" init Redis! ")
+	client, err := getRedisClient(&global.App.Config.Redis)
+	if err != nil {
+		panic("init redis failed!")
+	}
+	global.App.RedisClient = client
+	return global.App
 }
 
 func getRedisClient(clientConf *config.Redis) (*redis.Client, error) {
