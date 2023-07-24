@@ -5,14 +5,14 @@ import (
 	"github.com/healer1219/gin-web-framework/global"
 )
 
-type StartOption func()
+type StartFunc func()
 
 type BootOption func() *global.Application
 
 type Application struct {
 	engine    *gin.Engine
 	bootOpts  []BootOption
-	startOpts []StartOption
+	startOpts []StartFunc
 	globalApp *global.Application
 }
 
@@ -30,18 +30,27 @@ func NewApplicationWithOpts(opts ...BootOption) *Application {
 	return NewApplication(
 		gin.Default(),
 		opts,
-		make([]StartOption, 0),
+		make([]StartFunc, 0),
 		global.App,
 	)
 }
 
-func NewApplication(engine *gin.Engine, bootOpts []BootOption, startOpts []StartOption, globalApp *global.Application) *Application {
+func NewApplication(engine *gin.Engine, bootOpts []BootOption, startOpts []StartFunc, globalApp *global.Application) *Application {
 	return &Application{
 		engine:    engine,
 		bootOpts:  bootOpts,
 		startOpts: startOpts,
 		globalApp: globalApp,
 	}
+}
+
+func (app *Application) StartFunc(startOpts ...StartFunc) *Application {
+	if app.startOpts == nil {
+		app.startOpts = startOpts
+	} else {
+		app.startOpts = append(app.startOpts, startOpts...)
+	}
+	return app
 }
 
 func (app *Application) Router(opts ...RouteOption) *Application {
