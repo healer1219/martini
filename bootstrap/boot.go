@@ -19,7 +19,6 @@ type Application struct {
 var baseBootOption = []BootOption{
 	InitConfig,
 	InitLog,
-	InitDb,
 }
 
 func Default() *Application {
@@ -44,6 +43,15 @@ func NewApplication(engine *gin.Engine, bootOpts []BootOption, startOpts []Start
 	}
 }
 
+func (app *Application) BootOpt(bootOpts ...BootOption) *Application {
+	if app.bootOpts == nil {
+		app.bootOpts = bootOpts
+	} else {
+		app.bootOpts = append(app.bootOpts, bootOpts...)
+	}
+	return app
+}
+
 func (app *Application) StartFunc(startOpts ...StartFunc) *Application {
 	if app.startOpts == nil {
 		app.startOpts = startOpts
@@ -57,6 +65,11 @@ func (app *Application) Router(opts ...RouteOption) *Application {
 	for _, opt := range opts {
 		opt(app.engine)
 	}
+	return app
+}
+
+func (app *Application) Use(middleware ...gin.HandlerFunc) *Application {
+	app.engine.Use(middleware...)
 	return app
 }
 

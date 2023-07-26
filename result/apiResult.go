@@ -31,6 +31,15 @@ func SuccessResult[T any](content T) (int, ApiResult[T]) {
 	}
 }
 
+func SuccessResultWithCount[T any](count int, content T) (int, ApiResult[T]) {
+	return http.StatusOK, ApiResult[T]{
+		Content:       content,
+		Count:         count,
+		StatusCode:    CommonOk,
+		StatusMessage: CommonOk,
+	}
+}
+
 func DefaultErrorResult() (int, ApiResult[any]) {
 	return http.StatusInternalServerError, ApiResult[any]{
 		Count:         0,

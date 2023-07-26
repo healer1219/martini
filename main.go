@@ -6,5 +6,5 @@ import (
 
 func main() {
 	defer bootstrap.RealeaseDB()
-	bootstrap.BootUp()
+	bootstrap.Default().BootUp()
 }
