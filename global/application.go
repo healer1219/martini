@@ -42,7 +42,7 @@ func (app *Application) RequireConfig(msg string) {
 }
 
 func (app *Application) RequireLog(msg string) {
-	if app.Config == nil {
+	if app.Logger == nil {
 		panic("logger is nil, msg: " + msg)
 	}
 }

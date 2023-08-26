@@ -10,10 +10,11 @@ type StartFunc func()
 type BootOption func() *global.Application
 
 type Application struct {
-	engine    *gin.Engine
-	bootOpts  []BootOption
-	startOpts []StartFunc
-	globalApp *global.Application
+	engine      *gin.Engine
+	bootOpts    []BootOption
+	startOpts   []StartFunc
+	middleWares []gin.HandlerFunc
+	globalApp   *global.Application
 }
 
 var baseBootOption = []BootOption{
@@ -22,16 +23,29 @@ var baseBootOption = []BootOption{
 }
 
 func Default() *Application {
-	return NewApplicationWithOpts(baseBootOption...)
+	app := NewApplicationWithOpts()
+	return app
 }
 
 func NewApplicationWithOpts(opts ...BootOption) *Application {
 	return NewApplication(
-		gin.Default(),
+		newGin(),
 		opts,
 		make([]StartFunc, 0),
 		global.App,
 	)
+}
+
+func newGin() *gin.Engine {
+	for _, bootOpt := range baseBootOption {
+		bootOpt()
+	}
+	engine := gin.New()
+	engine.Use(
+		LoggerMiddleWare(global.Logger()),
+		GinRecovery(global.Logger(), true),
+	)
+	return engine
 }
 
 func NewApplication(engine *gin.Engine, bootOpts []BootOption, startOpts []StartFunc, globalApp *global.Application) *Application {
@@ -69,13 +83,20 @@ func (app *Application) Router(opts ...RouteOption) *Application {
 }
 
 func (app *Application) Use(middleware ...gin.HandlerFunc) *Application {
-	app.engine.Use(middleware...)
+	if app.middleWares == nil {
+		app.middleWares = middleware
+	} else {
+		app.middleWares = append(app.middleWares, middleware...)
+	}
 	return app
 }
 
 func (app *Application) BootUp() {
 	for _, bootOpt := range app.bootOpts {
 		bootOpt()
+	}
+	for _, middleWare := range app.middleWares {
+		app.engine.Use(middleWare)
 	}
 	for _, startOpt := range app.startOpts {
 		startOpt()
