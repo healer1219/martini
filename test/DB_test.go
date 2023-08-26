@@ -1,8 +1,8 @@
 package test
 
 import (
-	"github.com/healer1219/gin-web-framework/bootstrap"
-	"github.com/healer1219/gin-web-framework/global"
+	"github.com/healer1219/martini/bootstrap"
+	"github.com/healer1219/martini/global"
 	"testing"
 	"time"
 )

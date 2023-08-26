@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/healer1219/gin-web-framework/bootstrap"
+	"github.com/healer1219/martini/bootstrap"
 )
 
 func main() {

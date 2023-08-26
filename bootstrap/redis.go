@@ -2,8 +2,8 @@ package bootstrap
 
 import (
 	"github.com/go-redis/redis"
-	"github.com/healer1219/gin-web-framework/config"
-	"github.com/healer1219/gin-web-framework/global"
+	"github.com/healer1219/martini/config"
+	"github.com/healer1219/martini/global"
 	"go.uber.org/zap"
 )
 

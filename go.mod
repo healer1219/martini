@@ -1,4 +1,4 @@
-module github.com/healer1219/gin-web-framework
+module github.com/healer1219/martini
 
 go 1.20
 

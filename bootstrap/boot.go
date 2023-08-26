@@ -2,7 +2,7 @@ package bootstrap
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/healer1219/gin-web-framework/global"
+	"github.com/healer1219/martini/global"
 )
 
 type StartFunc func()

@@ -1,8 +1,8 @@
 package bootstrap
 
 import (
-	"github.com/healer1219/gin-web-framework/config"
-	"github.com/healer1219/gin-web-framework/global"
+	"github.com/healer1219/martini/config"
+	"github.com/healer1219/martini/global"
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"

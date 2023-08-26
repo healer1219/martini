@@ -3,8 +3,8 @@ package bootstrap
 import (
 	"fmt"
 	"github.com/fsnotify/fsnotify"
-	"github.com/healer1219/gin-web-framework/config"
-	"github.com/healer1219/gin-web-framework/global"
+	"github.com/healer1219/martini/config"
+	"github.com/healer1219/martini/global"
 	"github.com/spf13/viper"
 	"os"
 )
