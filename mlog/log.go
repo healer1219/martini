@@ -1,4 +1,4 @@
-package bootstrap
+package mlog
 
 import (
 	"github.com/gin-gonic/gin"

@@ -3,6 +3,7 @@ package bootstrap
 import (
 	"github.com/healer1219/martini/config"
 	"github.com/healer1219/martini/global"
+	"github.com/healer1219/martini/mlog"
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -87,7 +88,7 @@ func generateMysqlUrl(conf config.Database) string {
 func getGormLogWriter(dbConfig config.Database) logger.Writer {
 	var writer io.Writer
 	if dbConfig.EnableFileLogWriter {
-		writer = GetLogWriter(dbConfig.LogFileName)
+		writer = mlog.GetLogWriter(dbConfig.LogFileName)
 	} else {
 		writer = os.Stdout
 	}

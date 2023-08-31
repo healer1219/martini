@@ -3,6 +3,7 @@ package test
 import (
 	"github.com/healer1219/martini/bootstrap"
 	"github.com/healer1219/martini/global"
+	"github.com/healer1219/martini/mlog"
 	"testing"
 	"time"
 )
@@ -23,7 +24,7 @@ type SystemInfo struct {
 
 func preTest() {
 	bootstrap.InitConfig()
-	bootstrap.InitLog()
+	mlog.InitLog()
 	bootstrap.InitDb()
 }
 

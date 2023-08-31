@@ -2,7 +2,9 @@ package bootstrap
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/healer1219/martini/config"
 	"github.com/healer1219/martini/global"
+	"github.com/healer1219/martini/mlog"
 )
 
 type StartFunc func()
@@ -18,8 +20,8 @@ type Application struct {
 }
 
 var baseBootOption = []BootOption{
-	InitConfig,
-	InitLog,
+	config.InitConfig,
+	mlog.InitLog,
 }
 
 func Default() *Application {
@@ -42,8 +44,8 @@ func newGin() *gin.Engine {
 	}
 	engine := gin.New()
 	engine.Use(
-		LoggerMiddleWare(global.Logger()),
-		GinRecovery(global.Logger(), true),
+		mlog.LoggerMiddleWare(global.Logger()),
+		mlog.GinRecovery(global.Logger(), true),
 	)
 	return engine
 }

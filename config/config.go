@@ -1,10 +1,75 @@
 package config
 
+import (
+	"fmt"
+	"github.com/fsnotify/fsnotify"
+	"github.com/healer1219/martini/global"
+	"github.com/spf13/viper"
+	"os"
+	"strings"
+)
+
 type Config struct {
 	App          App                    `mapstructure:"app" json:"app" yaml:"app"`
-	Log          Log                    `mapstructure:"log" json:"log" yaml:"log"`
+	Log          Log                    `mapstructure:"mlog" json:"mlog" yaml:"mlog"`
 	Database     Database               `mapstructure:"database" json:"database" yaml:"database"`
 	DatabaseMap  map[string]Database    `mapstructure:"dbs" json:"dbs" yaml:"dbs"`
 	Redis        Redis                  `mapstructure:"redis" json:"redis" yaml:"redis"`
 	CustomConfig map[string]interface{} `mapstructure:"custom" json:"custom" yaml:"custom"`
+}
+
+func InitConfig() *global.Application {
+	configFile := "config.yaml"
+	if envConfigFile := os.Getenv("CONFIG_FILE"); envConfigFile != "" {
+		configFile = envConfigFile
+	}
+	InitConfigByName(configFile)
+	return global.App
+}
+
+func handleFileName(fileName string) (path string, name string, fileType string) {
+	if fileName == "" {
+		return "", "", ""
+	}
+	split := strings.Split(fileName, string(os.PathSeparator))
+	if len(split) == 0 {
+		return "", "", ""
+	}
+
+}
+
+func InitConfigByName(fileName string) *viper.Viper {
+	v := viper.New()
+	v.SetConfigFile(fileName)
+	v.SetConfigType("yaml")
+	err := v.ReadInConfig()
+	if err != nil {
+		panic(fmt.Errorf("read config file failed: %s \n", err))
+	}
+	v.WatchConfig()
+	v.OnConfigChange(func(in fsnotify.Event) {
+		UnmarshalConfig(v)
+	})
+	UnmarshalConfig(v)
+	return v
+}
+
+func UnmarshalConfig(v *viper.Viper) {
+	unmarshalErr := v.Unmarshal(&global.App.Config)
+	if unmarshalErr != nil {
+		fmt.Println(unmarshalErr)
+	}
+}
+
+func GetConfig(configFileName string) (*viper.Viper, Config) {
+	v := viper.New()
+	v.SetConfigFile(configFileName)
+	v.SetConfigType("yaml")
+	err := v.ReadInConfig()
+	if err != nil {
+		panic(fmt.Errorf("read config file failed: %s \n", err))
+	}
+	conf := Config{}
+	v.Unmarshal(&conf)
+	return v, conf
 }
