@@ -6,7 +6,6 @@ import (
 	"github.com/healer1219/martini/global"
 	"github.com/spf13/viper"
 	"os"
-	"strings"
 )
 
 type Config struct {
@@ -25,17 +24,6 @@ func InitConfig() *global.Application {
 	}
 	InitConfigByName(configFile)
 	return global.App
-}
-
-func handleFileName(fileName string) (path string, name string, fileType string) {
-	if fileName == "" {
-		return "", "", ""
-	}
-	split := strings.Split(fileName, string(os.PathSeparator))
-	if len(split) == 0 {
-		return "", "", ""
-	}
-
 }
 
 func InitConfigByName(fileName string) *viper.Viper {
