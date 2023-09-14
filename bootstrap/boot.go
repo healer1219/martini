@@ -5,6 +5,7 @@ import (
 	"github.com/healer1219/martini/config"
 	"github.com/healer1219/martini/global"
 	"github.com/healer1219/martini/mlog"
+	"github.com/healer1219/martini/routes"
 )
 
 type StartFunc func()
@@ -77,7 +78,7 @@ func (app *Application) StartFunc(startOpts ...StartFunc) *Application {
 	return app
 }
 
-func (app *Application) Router(opts ...RouteOption) *Application {
+func (app *Application) Router(opts ...routes.RouteOption) *Application {
 	for _, opt := range opts {
 		opt(app.engine)
 	}
