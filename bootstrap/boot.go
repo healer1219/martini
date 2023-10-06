@@ -76,9 +76,7 @@ func (app *Application) StartFunc(startOpts ...StartFunc) *Application {
 }
 
 func (app *Application) Router(opts ...RouteOption) *Application {
-	for _, opt := range opts {
-		opt(app.engine)
-	}
+	Regist(opts...)
 	return app
 }
 
@@ -97,6 +95,9 @@ func (app *Application) BootUp() {
 	}
 	for _, middleWare := range app.middleWares {
 		app.engine.Use(middleWare)
+	}
+	for _, opt := range routeOpts {
+		opt(app.engine)
 	}
 	for _, startOpt := range app.startOpts {
 		startOpt()
