@@ -10,15 +10,12 @@ func HasRouter() bool {
 	return len(routeOpts) != 0
 }
 
-func Regist(opts ...RouteOption) {
+func Register(opts ...RouteOption) {
 	routeOpts = append(routeOpts, opts...)
 }
 
-func SetupRouter() *gin.Engine {
-	engine := gin.Default()
+func SetupRouter(engine *gin.Engine) {
 	for _, routeOpt := range routeOpts {
 		routeOpt(engine)
 	}
-
-	return engine
 }

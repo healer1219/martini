@@ -3,8 +3,8 @@ package bootstrap
 import (
 	"context"
 	"github.com/gin-gonic/gin"
-	"github.com/healer1219/martini/config"
 	"github.com/healer1219/martini/cloud"
+	"github.com/healer1219/martini/config"
 	"github.com/healer1219/martini/global"
 	"github.com/healer1219/martini/mlog"
 	"github.com/healer1219/martini/routes"
@@ -100,7 +100,7 @@ func (app *Application) ShutDownFunc(shutDownOpts ...ShutDownFunc) *Application 
 }
 
 func (app *Application) Router(opts ...routes.RouteOption) *Application {
-	Regist(opts...)
+	routes.Register(opts...)
 	return app
 }
 
@@ -157,9 +157,7 @@ func (app *Application) BootUp() {
 	for _, middleWare := range app.middleWares {
 		app.engine.Use(middleWare)
 	}
-	for _, opt := range routeOpts {
-		opt(app.engine)
-	}
+	routes.SetupRouter(app.engine)
 	for _, startOpt := range app.startOpts {
 		startOpt()
 	}
