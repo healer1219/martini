@@ -22,22 +22,21 @@ func (result *ApiResult[T]) IsSuccess() bool {
 	return result.StatusCode == CommonOk
 }
 
-func SuccessResult[T any](content T) (int, ApiResult[T]) {
-	return http.StatusOK, ApiResult[T]{
+func Result[T any](httpCode int, statusCode string, statusMessage string, content T, count int) (int, ApiResult[T]) {
+	return httpCode, ApiResult[T]{
 		Content:       content,
-		Count:         0,
-		StatusCode:    CommonOk,
-		StatusMessage: CommonOk,
+		Count:         count,
+		StatusCode:    statusCode,
+		StatusMessage: statusMessage,
 	}
 }
 
+func SuccessResult[T any](content T) (int, ApiResult[T]) {
+	return Result(http.StatusOK, CommonOk, CommonOk, content, 0)
+}
+
 func SuccessResultWithCount[T any](count int, content T) (int, ApiResult[T]) {
-	return http.StatusOK, ApiResult[T]{
-		Content:       content,
-		Count:         count,
-		StatusCode:    CommonOk,
-		StatusMessage: CommonOk,
-	}
+	return Result(http.StatusOK, CommonOk, CommonOk, content, count)
 }
 
 func DefaultErrorResult() (int, ApiResult[any]) {

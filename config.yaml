@@ -14,6 +14,10 @@ log:
   max_age: 28 # 旧文件的最大保留天数
   compress: true # 是否压缩
 
+cloud:
+  ip: 127.0.0.1
+  port: 8500
+
 database:
   database_type: mysql
   ip: 127.0.0.1
