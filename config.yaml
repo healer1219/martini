@@ -17,6 +17,7 @@ log:
 cloud:
   ip: 127.0.0.1
   port: 8500
+  health_check_path: /actuator/health
 
 database:
   database_type: mysql

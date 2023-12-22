@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/hashicorp/consul/api"
+	"github.com/healer1219/martini/config"
 	"github.com/healer1219/martini/result"
 	"log"
+	"strings"
 )
 
 type ConsulServiceRegistry struct {
@@ -19,7 +21,8 @@ const (
 	needSecure                   = "secure=true"
 	unSecure                     = "secure=false"
 	tagFormat                    = "%s=%s"
-	healthCheckUrl               = "%s://%s:%d/actuator/health"
+	defaultHealthCheckUrl        = "actuator/health"
+	healthCheckUrlFmt            = "%s://%s:%d/%s"
 	http                         = "http"
 	https                        = "https"
 	defaultHealthCheckTimeOut    = "5s"
@@ -29,8 +32,13 @@ const (
 )
 
 // DefaultHealthCheck default consul health check router
-func DefaultHealthCheck(ctx *gin.Context) {
-	ctx.JSON(result.SuccessResult("success"))
+func DefaultHealthCheck(engine *gin.Engine) {
+	engine.GET(
+		"/actuator/health",
+		func(ctx *gin.Context) {
+			ctx.JSON(result.SuccessResult("success"))
+		},
+	)
 }
 
 func (c *ConsulServiceRegistry) Register(serviceInstance ServiceInstance) bool {
@@ -57,10 +65,20 @@ func (c *ConsulServiceRegistry) Register(serviceInstance ServiceInstance) bool {
 
 	agent := new(api.AgentServiceCheck)
 
-	if isSecure {
-		agent.HTTP = fmt.Sprintf(healthCheckUrl, https, registration.Address, registration.Port)
+	var healthCheckUrl string
+	if serviceInstance.GetHealthCheckUrl() != "" {
+		healthCheckUrl, _ = strings.CutPrefix(
+			serviceInstance.GetHealthCheckUrl(),
+			"/",
+		)
 	} else {
-		agent.HTTP = fmt.Sprintf(healthCheckUrl, http, registration.Address, registration.Port)
+		healthCheckUrl = defaultHealthCheckUrl
+	}
+
+	if isSecure {
+		agent.HTTP = fmt.Sprintf(healthCheckUrlFmt, https, registration.Address, registration.Port, healthCheckUrl)
+	} else {
+		agent.HTTP = fmt.Sprintf(healthCheckUrlFmt, http, registration.Address, registration.Port, healthCheckUrl)
 	}
 
 	agent.Timeout = defaultHealthCheckTimeOut
@@ -115,17 +133,17 @@ func (c *ConsulServiceRegistry) Deregister() {
 	c.localServiceInstance = nil
 }
 
-func NewDefaultConsulServiceRegistry(host string, port int, token string) (*ConsulServiceRegistry, error) {
-	if len(host) < 3 {
+func NewDefaultConsulServiceRegistry(registryConf *config.Registry) (*ConsulServiceRegistry, error) {
+	if len(registryConf.Ip) < 3 {
 		return nil, errors.New("host is illegal")
 	}
-	if port <= 0 || port > 65535 {
+	if registryConf.Port <= 0 || registryConf.Port > 65535 {
 		return nil, errors.New("port is illegal, port should between 1 and 65535")
 	}
-	config := api.DefaultConfig()
-	config.Address = fmt.Sprintf(hostPortFormat, host, port)
-	config.Token = token
-	client, err := api.NewClient(config)
+	consulConfig := api.DefaultConfig()
+	consulConfig.Address = fmt.Sprintf(hostPortFormat, registryConf.Ip, registryConf.Port)
+	consulConfig.Token = registryConf.Token
+	client, err := api.NewClient(consulConfig)
 	if err != nil {
 		log.Println("err creat client", err)
 		return nil, err

@@ -135,14 +135,12 @@ func (app *Application) DefaultDiscovery() *Application {
 	if registry.IsEmpty() {
 		log.Fatal("config file [cloud] is illegal")
 	}
-	serviceRegistry, err := cloud.NewDefaultConsulServiceRegistry(registry.Ip, registry.Port, registry.Token)
+	serviceRegistry, err := cloud.NewDefaultConsulServiceRegistry(&registry)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	app.Router(func(engine *gin.Engine) {
-		engine.GET("/actuator/health", cloud.DefaultHealthCheck)
-	})
+	app.Router(cloud.DefaultHealthCheck)
 
 	return app.Discovery(instance, serviceRegistry)
 }

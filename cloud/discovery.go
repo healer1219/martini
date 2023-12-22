@@ -24,31 +24,36 @@ type ServiceInstance interface {
 	// IsSecure return Whether the port of the registered service instance uses HTTPS.
 	IsSecure() bool
 
+	// GetHealthCheckUrl return The health check URL of the registered service instance.
+	GetHealthCheckUrl() string
+
 	// GetMetadata return The key / value pair metadata associated with the service instance.
 	GetMetadata() map[string]string
 }
 
 type DefaultServiceInstance struct {
-	InstanceId string
-	ServiceId  string
-	Host       string
-	Port       int
-	Secure     bool
-	Metadata   map[string]string
+	InstanceId     string
+	ServiceId      string
+	Host           string
+	Port           int
+	Secure         bool
+	HealthCheckUrl string
+	Metadata       map[string]string
 }
 
 const defaultInstanceIdTemplate = "%s-%s-%s"
 
 func NewDefaultServiceInstance() (*DefaultServiceInstance, error) {
 	app := global.Config().App
+	cloud := global.Config().Cloud
 	ip, err := utils.GetLocalIp()
 	if err != nil {
 		return nil, err
 	}
-	return NewServiceInstance(app.Name, ip, app.Port, false, nil, "")
+	return NewServiceInstance(app.Name, ip, app.Port, false, cloud.HealthCheckPath, nil, "")
 }
 
-func NewServiceInstance(serviceId string, host string, port int, secure bool, metadata map[string]string, instanceId string) (*DefaultServiceInstance, error) {
+func NewServiceInstance(serviceId string, host string, port int, secure bool, healthCheckUrl string, metadata map[string]string, instanceId string) (*DefaultServiceInstance, error) {
 	if len(host) == 0 {
 		localIp, err := utils.GetLocalIp()
 		if err != nil {
@@ -62,12 +67,13 @@ func NewServiceInstance(serviceId string, host string, port int, secure bool, me
 	}
 
 	return &DefaultServiceInstance{
-		InstanceId: instanceId,
-		ServiceId:  serviceId,
-		Host:       host,
-		Port:       port,
-		Secure:     secure,
-		Metadata:   metadata,
+		InstanceId:     instanceId,
+		ServiceId:      serviceId,
+		Host:           host,
+		Port:           port,
+		Secure:         secure,
+		HealthCheckUrl: healthCheckUrl,
+		Metadata:       metadata,
 	}, nil
 }
 
@@ -93,4 +99,8 @@ func (serviceInstance *DefaultServiceInstance) IsSecure() bool {
 
 func (serviceInstance *DefaultServiceInstance) GetMetadata() map[string]string {
 	return serviceInstance.Metadata
+}
+
+func (serviceInstance *DefaultServiceInstance) GetHealthCheckUrl() string {
+	return serviceInstance.HealthCheckUrl
 }
