@@ -15,12 +15,22 @@ type Application struct {
 	DB          *gorm.DB
 	RedisClient *redis.Client
 	dbMap       map[string]*gorm.DB
+	Ctx         *Context
 }
 
-var App = new(Application)
+var App *Application
+
+func init() {
+	App = new(Application)
+	App.Ctx = DefaultCtx()
+}
 
 func Config() *config.Config {
 	return App.Config
+}
+
+func Ctx() *Context {
+	return App.Ctx
 }
 
 func GetConfigByName(key string) interface{} {

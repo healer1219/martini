@@ -8,6 +8,7 @@ import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
+	"log"
 	"net"
 	"net/http"
 	"net/http/httputil"
@@ -35,12 +36,14 @@ var (
 
 func InitLog() *global.Application {
 	global.App.RequireConfig(" init logger! ")
+	log.Printf("initing log \n")
 	globalConfig = global.App.Config
 	createRootDir()
 	setLogLevel()
 	core := getZapCore()
 	global.App.Logger = zap.New(core, options...)
 	zap.ReplaceGlobals(global.App.Logger)
+	log.Printf("init log complete \n")
 	return global.App
 }
 

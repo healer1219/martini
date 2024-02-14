@@ -2,9 +2,8 @@ package test
 
 import (
 	"github.com/healer1219/martini/bootstrap"
-	"github.com/healer1219/martini/config"
 	"github.com/healer1219/martini/global"
-	"github.com/healer1219/martini/mlog"
+	"github.com/healer1219/martini/mevent"
 	"testing"
 	"time"
 )
@@ -23,21 +22,23 @@ type SystemInfo struct {
 	delFlg      int       `gorm:"column:I_DEL_FLG"`
 }
 
-func preTest() {
-	config.InitConfig()
-	mlog.InitLog()
-	bootstrap.InitDb()
-}
-
 func TestDb(t *testing.T) {
-
 	bootstrap.Default().BootUp()
-
-	preTest()
 	var systemInfo SystemInfo
 	defer bootstrap.RealeaseDB()
 	global.DB().Raw("select * from TAB_SYSTEM_INFO where S_ID = ?", "36a4800b-c751-4bcf-bb94-a71de55fe3d2").Scan(&systemInfo)
 	if systemInfo.ID == "" {
 		t.Errorf("select failed! %v \n", systemInfo)
 	}
+}
+
+type InitDbStruct struct {
+}
+
+func (i InitDbStruct) OnEvent(ctx *global.Context) {
+	bootstrap.InitDb()
+}
+
+func init() {
+	mevent.Add(bootstrap.StartupEvent, InitDbStruct{})
 }
